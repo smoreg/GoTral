@@ -123,9 +123,7 @@ func (r GoTral) LoadConfig() (confret, error) {
 		return nil, fmt.Errorf("failed to decrypt data, got : %v", err.Error())
 	}
 
-	// initialize slices of config to receive data from api
-	var decoded []config
-	err = json.Unmarshal(decrypt, &decoded)
+	decoded, err := initializeConfig(decrypt)
 	if err != nil {
 		return nil, err
 	}
@@ -144,4 +142,16 @@ func (r GoTral) LoadConfig() (confret, error) {
 	}
 
 	return result, nil
+}
+
+// initializeConfig initialize slices of config to receive data from api
+func initializeConfig(decrypt []byte) ([]config, error) {
+	var decoded []config
+	if len(decrypt) == 0 {
+		return decoded, nil
+	}
+	if err := json.Unmarshal(decrypt, &decoded); err != nil {
+		return nil, err
+	}
+	return decoded, nil
 }
